@@ -23,15 +23,19 @@ namespace CalculadoraApi
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddControllers();
             services.AddCors(opt =>
             {
-                opt.AddPolicy("CorsPolicy", policy =>
+                opt.AddPolicy("CorsPolicy", builder =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins().AllowAnyHeader()
-                                .AllowAnyMethod(); 
+                    builder.AllowAnyOrigin()
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                           
                 });
             });
 
@@ -44,13 +48,13 @@ namespace CalculadoraApi
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseCors(option => option.AllowAnyOrigin()); 
+            app.UseCors("CorsPolicy");
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthorization();
-
+         
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
